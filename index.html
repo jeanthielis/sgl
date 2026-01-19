@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SGL - Sistema de Gestão de Liderança</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,13 +12,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* --- ESTILOS GERAIS (Mantidos) --- */
+        /* --- VARIÁVEIS --- */
         :root {
             --bg-body: #f8fafc; --bg-sidebar: linear-gradient(180deg, #0369a1 0%, #0c4a6e 100%);
             --bg-card: #ffffff; --bg-input: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b;
             --text-sidebar: #ffffff; --border-color: #e2e8f0; --primary: #0ea5e9; --primary-hover: #0284c7;
             --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --nav-height: 60px; /* Altura da barra mobile */
         }
         body.dark-mode {
             --bg-body: #0f172a; --bg-sidebar: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -26,56 +27,72 @@
             --text-sidebar: #e2e8f0; --border-color: #334155;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-primary); line-height: 1.6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-primary); line-height: 1.6; padding-bottom: 0; }
         
-        /* Layout */
+        /* Layout Geral */
         .app-container { display: flex; min-height: 100vh; }
         .sidebar { width: 260px; background: var(--bg-sidebar); color: var(--text-sidebar); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); z-index: 10; }
         .logo-container { padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
+        
+        /* Menu Desktop */
         .nav-menu { flex: 1; padding: 20px 0; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; transition: 0.2s; }
         .nav-item:hover { background-color: rgba(255,255,255,0.1); color: white; }
         .nav-item.active { background-color: rgba(255,255,255,0.15); color: white; border-right: 3px solid var(--primary); }
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .header { background-color: var(--bg-card); padding: 16px 24px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; }
+
+        /* Bottom Navigation (Mobile) - Oculto no Desktop */
+        .bottom-nav { display: none; }
+
+        /* Conteúdo Principal */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; height: 100vh; }
+        .header { background-color: var(--bg-card); padding: 16px 24px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .header-title { font-size: 20px; font-weight: 600; }
-        .content-area { flex: 1; padding: 24px; overflow-y: auto; }
-        .card { background-color: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 24px; overflow: hidden; }
-        .card-header { padding: 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 18px; }
+        .content-area { flex: 1; padding: 24px; overflow-y: auto; scroll-behavior: smooth; }
+
+        /* Cards */
+        .card { background-color: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 15px; overflow: hidden; }
+        .card-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 16px; }
         .card-body { padding: 20px; }
         
-        /* Componentes */
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        /* Form Elements */
+        .form-control { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--bg-input); color: var(--text-primary); margin-bottom: 15px; font-size: 14px; }
+        /* Evita zoom no iPhone */
+        @media screen and (max-width: 768px) { .form-control { font-size: 16px; } }
+
+        /* Buttons */
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-primary { background-color: var(--primary); color: white; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
-        .btn-outline:hover { background-color: #f1f5f9; }
-        body.dark-mode .btn-outline:hover { background-color: #334155; }
         .btn-danger { background-color: var(--danger); color: white; }
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .form-control { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--bg-input); color: var(--text-primary); margin-bottom: 15px; }
-        
-        .table { width: 100%; border-collapse: collapse; }
+
+        /* Tabelas */
+        .table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .table th { text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-secondary); }
         .table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-        
-        .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+
+        /* Floating Buttons */
+        .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; transition: bottom 0.3s; }
         .fab { width: 56px; height: 56px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: var(--shadow-lg); color: white; transition: transform 0.2s; }
-        .fab:hover { transform: scale(1.1); }
+        .fab:active { transform: scale(0.9); }
         .fab-add { background-color: var(--primary); }
         .fab-theme { background-color: var(--text-primary); color: var(--bg-body); }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+
+        /* Modais */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
         .modal-content { background: var(--bg-card); width: 90%; max-width: 500px; padding: 24px; border-radius: 16px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; }
-        
+
+        /* Score Display & Charts */
         .score-display { text-align: center; padding: 20px; background: linear-gradient(135deg, var(--primary) 0%, #0369a1 100%); border-radius: 16px; color: white; margin-bottom: 20px; }
-        .score-value { font-size: 56px; font-weight: 700; line-height: 1; }
-        .chart-container { position: relative; height: 300px; width: 100%; margin-top: 20px; margin-bottom: 30px; }
+        .score-value { font-size: 48px; font-weight: 700; line-height: 1; }
+        .chart-container { position: relative; height: 250px; width: 100%; margin-top: 20px; margin-bottom: 30px; }
         
-        .badge-points { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px; }
+        /* Badges e Helpers */
+        .badge-points { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px; white-space: nowrap; }
         .bg-success { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
         .bg-danger { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
         .bg-gray { background-color: rgba(100, 116, 139, 0.2); color: var(--text-secondary); }
@@ -85,12 +102,13 @@
         .tab-content.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* Switches & Toggles */
         .toggle-type { display: flex; margin-bottom: 15px; background: var(--border-color); padding: 4px; border-radius: 8px; }
-        .toggle-option { flex: 1; text-align: center; padding: 8px; cursor: pointer; border-radius: 6px; font-weight: 500; }
+        .toggle-option { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 14px; }
         .toggle-option.active { background: var(--bg-card); box-shadow: var(--shadow-sm); }
         .toggle-option.active.negativo { color: var(--danger); border-left: 3px solid var(--danger); }
         .toggle-option.active.positivo { color: var(--success); border-left: 3px solid var(--success); }
-
+        
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -98,16 +116,78 @@
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Novo estilo para checkbox de desativar penalidade */
-        .checkbox-container {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 15px; 
-            background: var(--bg-input); padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;
-        }
+        .checkbox-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: var(--bg-input); padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; }
         .checkbox-container input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); }
 
-        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        /* Loading */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary); animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* =========================================
+           MOBILE OPTIMIZATIONS (CSS RESPONSIVO)
+           ========================================= */
+        @media (max-width: 768px) {
+            .sidebar { display: none; } /* Esconde sidebar lateral */
+            
+            /* Bottom Navigation Bar */
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: var(--nav-height);
+                background-color: var(--bg-card);
+                border-top: 1px solid var(--border-color);
+                z-index: 1000;
+                justify-content: space-around;
+                align-items: center;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            }
+            .nav-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-secondary);
+                font-size: 10px;
+                background: none;
+                border: none;
+                width: 100%;
+                height: 100%;
+                gap: 4px;
+            }
+            .nav-btn i { font-size: 20px; margin-bottom: 2px; }
+            .nav-btn.active { color: var(--primary); }
+            
+            /* Ajustes de Layout Mobile */
+            .main-content { height: auto; padding-bottom: calc(var(--nav-height) + 20px); }
+            .content-area { padding: 15px; overflow-y: visible; }
+            .header { padding: 15px; }
+            
+            /* Modais Full Screen no Mobile */
+            .modal { align-items: flex-end; }
+            .modal-content { 
+                width: 100%; 
+                max-width: 100%; 
+                border-radius: 20px 20px 0 0; 
+                padding: 25px; 
+                max-height: 90vh;
+                animation: slideUp 0.3s;
+            }
+            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+            /* FAB Ajustado para não cobrir o menu */
+            .fab-container { bottom: calc(var(--nav-height) + 20px); right: 20px; }
+            
+            /* Tabelas Responsivas (Scroll horizontal se precisar) */
+            .card-body { overflow-x: auto; }
+            
+            /* Aumentar área de toque */
+            .btn { min-height: 44px; }
+            select.form-control { min-height: 44px; }
+        }
     </style>
 </head>
 <body>
@@ -125,7 +205,7 @@
                 <a class="nav-item active" onclick="switchTab('ocorrencias', this)"><i class="fas fa-list"></i> Ocorrências</a>
                 <a class="nav-item" onclick="switchTab('historico', this)"><i class="fas fa-history"></i> Histórico</a>
                 <a class="nav-item" onclick="switchTab('resultado', this)"><i class="fas fa-trophy"></i> Resultado</a>
-                <a class="nav-item" onclick="switchTab('configuracoes', this)"><i class="fas fa-cogs"></i> Configurações</a>
+                <a class="nav-item" onclick="switchTab('configuracoes', this)"><i class="fas fa-cogs"></i> Config</a>
                 <a class="nav-item" onclick="switchTab('lideres', this)"><i class="fas fa-users"></i> Líderes</a>
             </nav>
         </aside>
@@ -137,7 +217,6 @@
             </header>
 
             <div class="content-area">
-                
                 <div id="ocorrencias" class="tab-content active">
                     <div class="card">
                         <div class="card-header">Registros de Hoje</div>
@@ -155,21 +234,21 @@
                     <div class="card">
                         <div class="card-header">Extrato Detalhado</div>
                         <div class="card-body">
-                            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                                <select id="histLider" class="form-control" style="flex: 2; min-width: 200px;"></select>
-                                <select id="histAno" class="form-control" style="flex: 1; min-width: 100px;"></select>
-                                <select id="histMes" class="form-control" style="flex: 1; min-width: 150px;">
-                                    <option value="todos">Ano Completo</option>
-                                    <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
-                                    <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
-                                    <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
-                                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                                <select id="histLider" class="form-control" style="flex: 100%;"></select>
+                                <select id="histAno" class="form-control" style="flex: 1;"></select>
+                                <select id="histMes" class="form-control" style="flex: 1;">
+                                    <option value="todos">Ano</option>
+                                    <option value="1">Jan</option><option value="2">Fev</option><option value="3">Mar</option>
+                                    <option value="4">Abr</option><option value="5">Mai</option><option value="6">Jun</option>
+                                    <option value="7">Jul</option><option value="8">Ago</option><option value="9">Set</option>
+                                    <option value="10">Out</option><option value="11">Nov</option><option value="12">Dez</option>
                                 </select>
                             </div>
                             <div id="listaHistorico"></div>
                             <div id="emptyStateHist" style="display: none; text-align: center; padding: 40px; color: var(--text-secondary);">
                                 <i class="fas fa-search" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
-                                <p>Sem registros para o filtro.</p>
+                                <p>Sem registros.</p>
                             </div>
                         </div>
                     </div>
@@ -179,16 +258,18 @@
                     <div class="card">
                         <div class="card-header">Desempenho</div>
                         <div class="card-body">
-                            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                                <select id="resLider" class="form-control" style="flex: 2; min-width: 200px;"></select>
-                                <select id="resAno" class="form-control" style="flex: 1; min-width: 100px;"></select>
-                                <select id="resPeriodo" class="form-control" style="flex: 1; min-width: 150px;">
-                                    <option value="anual">Anual (Meta 1200)</option>
-                                    <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
-                                    <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
-                                    <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
-                                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
-                                </select>
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                                <select id="resLider" class="form-control" style="flex: 100%;"></select>
+                                <div style="display:flex; gap:10px; width:100%">
+                                    <select id="resAno" class="form-control" style="flex: 1;"></select>
+                                    <select id="resPeriodo" class="form-control" style="flex: 1;">
+                                        <option value="anual">Anual</option>
+                                        <option value="1">Jan</option><option value="2">Fev</option><option value="3">Mar</option>
+                                        <option value="4">Abr</option><option value="5">Mai</option><option value="6">Jun</option>
+                                        <option value="7">Jul</option><option value="8">Ago</option><option value="9">Set</option>
+                                        <option value="10">Out</option><option value="11">Nov</option><option value="12">Dez</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="score-display">
                                 <div class="score-value" id="displayPontos">--</div>
@@ -196,7 +277,7 @@
                             </div>
                             <div class="chart-container"><canvas id="graficoResultado"></canvas></div>
                             <h3>Detalhamento</h3>
-                            <table class="table" id="tabelaExtrato"><thead><tr><th>Regra</th><th>Qtd/Valor</th><th>Impacto</th></tr></thead><tbody></tbody></table>
+                            <table class="table" id="tabelaExtrato"><thead><tr><th>Regra</th><th>Qtd</th><th>Impacto</th></tr></thead><tbody></tbody></table>
                         </div>
                     </div>
                 </div>
@@ -205,13 +286,13 @@
                     <div class="card">
                         <div class="card-header">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span>Regras e Pesos</span>
-                                <button class="btn btn-primary btn-sm" onclick="abrirModalRegra()">+ Nova Regra</button>
+                                <span>Regras</span>
+                                <button class="btn btn-primary btn-sm" onclick="abrirModalRegra()">+ Regra</button>
                             </div>
                         </div>
                         <div class="card-body">
                             <table class="table" id="tabelaRegras">
-                                <thead><tr><th>Ativa</th><th>Nome</th><th>Configuração</th><th>Peso</th><th>Ação</th></tr></thead>
+                                <thead><tr><th>Ativa</th><th>Nome</th><th>Tipo</th><th>Pts</th><th></th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -222,8 +303,8 @@
                     <div class="card">
                         <div class="card-header">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span>Equipe de Líderes</span>
-                                <button class="btn btn-primary btn-sm" onclick="abrirModalLider()">+ Novo Líder</button>
+                                <span>Equipe</span>
+                                <button class="btn btn-primary btn-sm" onclick="abrirModalLider()">+ Líder</button>
                             </div>
                         </div>
                         <div class="card-body"><div id="listaLideresGerenciar"></div></div>
@@ -231,6 +312,24 @@
                 </div>
             </div>
         </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="switchTab('ocorrencias', this)">
+                <i class="fas fa-list"></i><span>Hoje</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('historico', this)">
+                <i class="fas fa-history"></i><span>Hist</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('resultado', this)">
+                <i class="fas fa-trophy"></i><span>Meta</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('configuracoes', this)">
+                <i class="fas fa-cogs"></i><span>Cfg</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('lideres', this)">
+                <i class="fas fa-users"></i><span>Team</span>
+            </button>
+        </nav>
 
         <div class="fab-container">
             <button class="fab fab-theme" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
@@ -272,26 +371,26 @@
             
             <div style="display: flex; gap: 10px;">
                 <div style="flex: 1;">
-                    <label>Peso (Pontos)</label>
+                    <label>Peso</label>
                     <input type="number" id="regraPeso" class="form-control" placeholder="5">
                 </div>
                 <div style="flex: 1;">
-                    <label>Meta / Alvo</label>
+                    <label>Meta</label>
                     <input type="number" id="regraMeta" class="form-control" value="0">
                 </div>
             </div>
             <small style="display: block; margin-bottom: 15px; color: var(--text-secondary); line-height: 1.3;">
-                <b>Se Meta = 0:</b> Usa o tipo Padrão abaixo.<br>
-                <b>Se Meta > 0:</b> Acima da meta ganha ponto, abaixo perde.
+                <b>Se Meta = 0:</b> Usa o tipo Padrão.<br>
+                <b>Se Meta > 0:</b> Acima ganha, abaixo perde.
             </small>
 
-            <label>Tipo Padrão (Se não houver Meta)</label>
+            <label>Tipo Padrão</label>
             <div class="toggle-type">
                 <div class="toggle-option active negativo" id="btnTypeNeg" onclick="setRegraType('negativo')">Penalidade</div>
                 <div class="toggle-option" id="btnTypePos" onclick="setRegraType('positivo')">Bonificação</div>
             </div>
             
-            <label>Limite de Qtd (Opcional)</label><input type="number" id="regraLimite" class="form-control" value="0">
+            <label>Limite Qtd (Opcional)</label><input type="number" id="regraLimite" class="form-control" value="0">
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn btn-outline" style="flex:1" onclick="fecharModais()">Cancelar</button>
@@ -303,7 +402,8 @@
     <div id="modalLider" class="modal">
         <div class="modal-content">
             <h3 id="tituloModalLider">Cadastrar Líder</h3><br>
-            <input type="hidden" id="editLiderId"> <label>Nome Completo</label><input type="text" id="novoLiderNome" class="form-control">
+            <input type="hidden" id="editLiderId">
+            <label>Nome Completo</label><input type="text" id="novoLiderNome" class="form-control">
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn btn-outline" style="flex:1" onclick="fecharModais()">Cancelar</button>
                 <button class="btn btn-primary" style="flex:1" onclick="salvarLider()">Salvar</button>
@@ -345,7 +445,6 @@
                 document.getElementById('currentDate').innerText = new Date().toLocaleDateString('pt-BR');
                 document.getElementById('inputData').valueAsDate = new Date();
                 
-                // Popula Anos
                 const y = new Date().getFullYear();
                 [document.getElementById('resAno'), document.getElementById('histAno')].forEach(s => {
                     s.innerHTML = ''; [y, y-1].forEach(a => s.appendChild(new Option(a, a)));
@@ -370,23 +469,32 @@
         async function criarPadrao() {
             const p = [
                 { nome: "Reclamação", peso: 5, tipo: 'negativo', limite: 0, meta: 0, ativa: true },
-                { nome: "Elogio", peso: 5, tipo: 'positivo', limite: 0, meta: 0, ativa: true },
-                { nome: "Nota Limpeza", peso: 5, tipo: 'positivo', limite: 0, meta: 93, ativa: true } 
+                { nome: "Elogio", peso: 5, tipo: 'positivo', limite: 0, meta: 0, ativa: true }
             ];
             for(const x of p) { const ref = await addDoc(collection(db, "regras"), x); regras.push({id:ref.id, ...x}); }
         }
 
-        function renderTudo() {
-            renderSelects(); renderRegras(); renderLideres(); renderHoje();
-        }
+        function renderTudo() { renderSelects(); renderRegras(); renderLideres(); renderHoje(); }
 
-        // --- GLOBAL EXPORTS ---
         window.switchTab = (id, el) => {
             document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            // Remove active class from both nav types
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); el.classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+            
+            document.getElementById(id).classList.add('active');
+            
+            // Highlight the correct buttons in both menus
+            const desktopBtn = document.querySelector(`.nav-item[onclick*="${id}"]`);
+            const mobileBtn = document.querySelector(`.nav-btn[onclick*="${id}"]`);
+            if(desktopBtn) desktopBtn.classList.add('active');
+            if(mobileBtn) mobileBtn.classList.add('active');
+
             if(id==='resultado') setTimeout(calcularResultado, 50);
             if(id==='historico') renderHistorico();
+            
+            // Mobile: Scroll to top
+            window.scrollTo(0,0);
         };
 
         window.toggleTheme = () => { isDarkMode = !isDarkMode; localStorage.setItem('theme', isDarkMode?'dark':'light'); aplicarTema(); };
@@ -396,28 +504,23 @@
             document.getElementById('divValorReal').style.display = 'none'; 
             document.getElementById('inputRegra').value = '';
             document.getElementById('descRegra').innerText = '';
-            document.getElementById('checkIgnorar').checked = false; // Reset checkbox
+            document.getElementById('checkIgnorar').checked = false; 
         };
         
         window.abrirModalRegra = () => document.getElementById('modalRegra').style.display = 'flex';
         
-        // Novo: Modal de Líder agora suporta edição
         window.abrirModalLider = (id = null) => { 
             const modal = document.getElementById('modalLider');
             const titulo = document.getElementById('tituloModalLider');
             const inputId = document.getElementById('editLiderId');
             const inputNome = document.getElementById('novoLiderNome');
-            
             modal.style.display = 'flex';
-            
             if(id) {
-                // Modo Edição
                 const l = lideres.find(x => x.id === id);
                 titulo.innerText = "Editar Líder";
                 inputId.value = id;
                 inputNome.value = l.nome;
             } else {
-                // Modo Criação
                 titulo.innerText = "Cadastrar Líder";
                 inputId.value = "";
                 inputNome.value = "";
@@ -425,7 +528,6 @@
         };
 
         window.fecharModais = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        
         window.setRegraType = t => {
             regraTipoAtual = t;
             document.getElementById('btnTypeNeg').className = `toggle-option ${t==='negativo'?'active negativo':''}`;
@@ -437,11 +539,9 @@
             const r = regras.find(x => x.id === e.target.value);
             const desc = document.getElementById('descRegra');
             const divValor = document.getElementById('divValorReal');
-            
             if (!r) { desc.innerText = ''; divValor.style.display = 'none'; return; }
-
             if (r.meta > 0) {
-                desc.innerText = `Regra de Meta: Alvo ${r.meta}. Peso: ${r.peso}`;
+                desc.innerText = `Meta Alvo: ${r.meta}. Peso: ${r.peso}`;
                 divValor.style.display = 'block';
                 document.getElementById('spanMetaAlvo').innerText = r.meta;
             } else {
@@ -453,29 +553,20 @@
         ['resLider','resAno','resPeriodo'].forEach(id=>document.getElementById(id).addEventListener('change', calcularResultado));
         ['histLider','histAno','histMes'].forEach(id=>document.getElementById(id).addEventListener('change', renderHistorico));
 
-        // --- CRUD ---
+        // --- CRUD ACTIONS ---
         window.salvarOcorrencia = async () => {
             const liderId = document.getElementById('inputLider').value;
             const regraId = document.getElementById('inputRegra').value;
             const data = document.getElementById('inputData').value;
             const obs = document.getElementById('inputObs').value;
             const valorReal = document.getElementById('inputValorReal').value;
-            const ignorar = document.getElementById('checkIgnorar').checked; // Captura estado do Checkbox
+            const ignorar = document.getElementById('checkIgnorar').checked;
 
             if(!liderId || !regraId || !data) return alert("Preencha campos");
-            
             const r = regras.find(x => x.id === regraId);
-            if(r && r.meta > 0 && !valorReal) return alert("Para esta regra, informe o Valor Real atingido.");
+            if(r && r.meta > 0 && !valorReal) return alert("Informe o Valor Real.");
 
-            const nova = { 
-                liderId, 
-                regraId, 
-                data, 
-                obs, 
-                valor: valorReal ? parseFloat(valorReal) : null,
-                ignorar: ignorar // Salva no banco
-            };
-            
+            const nova = { liderId, regraId, data, obs, valor: valorReal ? parseFloat(valorReal) : null, ignorar: ignorar };
             try {
                 const docRef = await addDoc(collection(db, "ocorrencias"), nova);
                 ocorrencias.push({id:docRef.id, ...nova});
@@ -489,8 +580,7 @@
             if(confirm('Excluir?')) {
                 await deleteDoc(doc(db, "ocorrencias", id));
                 ocorrencias = ocorrencias.filter(o => o.id !== id);
-                renderHoje(); 
-                if(document.getElementById('historico').classList.contains('active')) renderHistorico();
+                renderHoje(); if(document.getElementById('historico').classList.contains('active')) renderHistorico();
             }
         };
 
@@ -499,10 +589,8 @@
             const peso = parseFloat(document.getElementById('regraPeso').value);
             const meta = parseFloat(document.getElementById('regraMeta').value) || 0;
             const limite = parseFloat(document.getElementById('regraLimite').value) || 0;
-            
             if(!nome || !peso) return;
             const nova = { nome, peso, meta, limite, tipo: regraTipoAtual, ativa: true };
-            
             try {
                 const docRef = await addDoc(collection(db, "regras"), nova);
                 regras.push({id:docRef.id, ...nova});
@@ -517,43 +605,35 @@
                 const r = regras.find(x => x.id === id);
                 if(r) r.ativa = novoStatus;
                 renderRegras(); 
-            } catch(e) { console.error(e); alert("Erro ao alterar status"); }
+            } catch(e) { console.error(e); }
         };
 
         window.deletarRegra = async (id) => {
-            if(confirm('Excluir regra permanentemente?')) {
+            if(confirm('Excluir regra?')) {
                 await deleteDoc(doc(db, "regras", id));
                 regras = regras.filter(r => r.id !== id);
                 renderRegras();
             }
         };
 
-        // --- CRUD LIDERES (ATUALIZADO) ---
         window.salvarLider = async () => {
             const nome = document.getElementById('novoLiderNome').value;
             const id = document.getElementById('editLiderId').value;
-            
             if(!nome) return;
-
             try {
                 if(id) {
-                    // Atualizar Existente
                     await updateDoc(doc(db, "lideres", id), { nome: nome });
-                    const lider = lideres.find(l => l.id === id);
-                    if(lider) lider.nome = nome;
+                    const l = lideres.find(x => x.id === id); if(l) l.nome = nome;
                 } else {
-                    // Criar Novo
                     const docRef = await addDoc(collection(db, "lideres"), {nome});
                     lideres.push({id:docRef.id, nome});
                 }
-                window.fecharModais(); 
-                renderLideres(); 
-                renderSelects();
-            } catch(e) { console.error(e); alert("Erro ao salvar líder."); }
+                window.fecharModais(); renderLideres(); renderSelects();
+            } catch(e) { alert("Erro ao salvar."); }
         };
 
         window.deletarLider = async (id) => {
-            if(confirm('Excluir líder? Isso não apaga as ocorrências dele.')) {
+            if(confirm('Excluir líder?')) {
                 await deleteDoc(doc(db, "lideres", id));
                 lideres = lideres.filter(l => l.id !== id);
                 renderLideres(); renderSelects();
@@ -571,10 +651,9 @@
             l.forEach(o => {
                 const li = lideres.find(x=>x.id===o.liderId)||{nome:'?'};
                 const re = regras.find(x=>x.id===o.regraId)||{nome:'Excluída', tipo:'negativo'};
-                
-                let txtExtra = '';
-                if(o.valor !== null && o.valor !== undefined) txtExtra += ` (Nota: ${o.valor})`;
-                if(o.ignorar) txtExtra += ` <span style="color:var(--text-secondary)">[Sem Pts]</span>`;
+                let txt = '';
+                if(o.valor !== null && o.valor !== undefined) txt += ` (Nota: ${o.valor})`;
+                if(o.ignorar) txt += ` <span style="color:var(--text-secondary)">[Ignorado]</span>`;
 
                 c.innerHTML += `
                 <div class="card" style="padding:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
@@ -582,7 +661,7 @@
                         <strong>${li.nome}</strong>
                         <div style="font-size:14px; color:var(--text-secondary)">
                             <span style="color:${re.tipo==='negativo'?'var(--danger)':'var(--success)'}">${re.nome}</span>
-                            ${txtExtra} ${o.obs?'- '+o.obs:''}
+                            ${txt} ${o.obs?'- '+o.obs:''}
                         </div>
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="deletarOcorrencia('${o.id}')"><i class="fas fa-trash"></i></button>
@@ -593,20 +672,13 @@
         function renderRegras() {
             const t = document.querySelector('#tabelaRegras tbody'); t.innerHTML = '';
             regras.forEach(r => {
-                const status = r.ativa !== false; 
-                const txtMeta = r.meta > 0 ? `<br><small style="color:var(--primary)">Meta: ${r.meta}</small>` : '';
-                const txtTipo = r.meta > 0 ? 'Híbrido' : (r.tipo === 'positivo' ? 'Bônus' : 'Pena');
-                
+                const st = r.ativa !== false; 
+                const txt = r.meta > 0 ? 'Meta' : (r.tipo === 'positivo' ? 'Bônus' : 'Pena');
                 t.innerHTML += `
-                <tr style="opacity: ${status ? 1 : 0.5}">
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" ${status ? 'checked' : ''} onchange="toggleRegraAtiva('${r.id}', ${status})">
-                            <span class="slider"></span>
-                        </label>
-                    </td>
-                    <td>${r.nome}${txtMeta}</td>
-                    <td>${txtTipo}</td>
+                <tr style="opacity: ${st ? 1 : 0.5}">
+                    <td><label class="switch"><input type="checkbox" ${st ? 'checked' : ''} onchange="toggleRegraAtiva('${r.id}', ${st})"><span class="slider"></span></label></td>
+                    <td>${r.nome}${r.meta>0?`<br><small style="color:var(--primary)">Alvo: ${r.meta}</small>`:''}</td>
+                    <td>${txt}</td>
                     <td>${r.peso}</td>
                     <td><button class="btn btn-danger btn-sm" onclick="deletarRegra('${r.id}')"><i class="fas fa-trash"></i></button></td>
                 </tr>`;
@@ -623,41 +695,33 @@
             c.innerHTML = '';
             
             if(!lid) { document.getElementById('emptyStateHist').style.display='block'; return; }
-
             const lista = ocorrencias.filter(o => {
                 const p = o.data.split('-');
-                let matchM = mes === 'todos' ? true : parseInt(p[1]) == mes;
-                return o.liderId === lid && parseInt(p[0]) === ano && matchM;
+                let m = mes === 'todos' ? true : parseInt(p[1]) == mes;
+                return o.liderId === lid && parseInt(p[0]) === ano && m;
             }).sort((a,b) => new Date(b.data)-new Date(a.data));
 
             document.getElementById('emptyStateHist').style.display = lista.length?'none':'block';
 
             lista.forEach(o => {
                 const re = regras.find(x=>x.id===o.regraId)||{nome:'?', peso:0};
-                let classe = 'bg-danger', sinal = '-', txtValor = '', pesoShow = re.peso;
+                let cl = 'bg-danger', sn = '-', txt = '', pts = re.peso;
                 
-                if (o.ignorar) {
-                    // SE ESTIVER IGNORADO (Desativado Penalidade)
-                    classe = 'bg-gray'; sinal = ''; pesoShow = 0; txtValor = " (Ignorado)";
-                } else if (re.meta > 0) {
-                    const atingiu = (o.valor >= re.meta);
-                    classe = atingiu ? 'bg-success' : 'bg-danger';
-                    sinal = atingiu ? '+' : '-';
-                    txtValor = ` | Nota: ${o.valor}`;
+                if (o.ignorar) { cl = 'bg-gray'; sn = ''; pts = 0; txt = " (Ignorado)"; }
+                else if (re.meta > 0) {
+                    const ok = (o.valor >= re.meta);
+                    cl = ok ? 'bg-success' : 'bg-danger'; sn = ok ? '+' : '-';
+                    txt = ` | Nota: ${o.valor}`;
                 } else {
-                    classe = re.tipo === 'positivo' ? 'bg-success' : 'bg-danger';
-                    sinal = re.tipo === 'positivo' ? '+' : '-';
+                    cl = re.tipo === 'positivo' ? 'bg-success' : 'bg-danger';
+                    sn = re.tipo === 'positivo' ? '+' : '-';
                 }
 
                 c.innerHTML += `
                 <div class="card" style="padding:15px; margin-bottom:10px; display:flex; justify-content:space-between;">
                     <div>
                         <span class="history-date">${new Date(o.data).toLocaleDateString('pt-BR',{timeZone:'UTC'})}</span>
-                        <div>
-                            <b>${re.nome}</b>
-                            <span class="badge-points ${classe}">${sinal}${pesoShow} pts</span>
-                            <small>${txtValor}</small>
-                        </div>
+                        <div><b>${re.nome}</b><span class="badge-points ${cl}">${sn}${pts}</span><small>${txt}</small></div>
                         ${o.obs ? `<small style="color:var(--text-secondary)">${o.obs}</small>` : ''}
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="deletarOcorrencia('${o.id}')"><i class="fas fa-trash"></i></button>
@@ -673,77 +737,53 @@
 
             const meta = per==='anual' ? 1200 : 100;
             document.getElementById('displayMeta').innerText = `Meta: ${meta}`;
-            
-            let total = 0, labels = [], data = [], colors = [];
+            let total = 0, lbs = [], dat = [], col = [];
             const tb = document.querySelector('#tabelaExtrato tbody'); tb.innerHTML = '';
             const ms = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
             if(per==='anual') {
                 let det = {};
                 for(let i=1; i<=12; i++) {
-                    const r = calcMes(lid, i, ano);
-                    total += r.nota;
-                    labels.push(ms[i-1]); data.push(r.nota);
-                    colors.push(r.nota>=90?'#10b981':(r.nota>=70?'#f59e0b':'#ef4444'));
-                    r.det.forEach(d => {
-                        if(!det[d.nome]) det[d.nome]={qtd:0,imp:0};
-                        det[d.nome].qtd += d.qtd; det[d.nome].imp += d.imp;
-                    });
+                    const r = calcMes(lid, i, ano); total += r.nota;
+                    lbs.push(ms[i-1]); dat.push(r.nota);
+                    col.push(r.nota>=90?'#10b981':(r.nota>=70?'#f59e0b':'#ef4444'));
+                    r.det.forEach(d => { if(!det[d.nome]) det[d.nome]={qtd:0,imp:0}; det[d.nome].qtd+=d.qtd; det[d.nome].imp+=d.imp; });
                 }
                 for(const [k,v] of Object.entries(det)) addLinha(tb, k, v.qtd, v.imp);
             } else {
-                const m = parseInt(per);
-                const r = calcMes(lid, m, ano);
-                total = r.nota;
-                labels=[ms[m-1]]; data=[total]; colors=[total>=90?'#10b981':(total>=70?'#f59e0b':'#ef4444')];
+                const m = parseInt(per); const r = calcMes(lid, m, ano); total = r.nota;
+                lbs=[ms[m-1]]; dat=[total]; col=[total>=90?'#10b981':(total>=70?'#f59e0b':'#ef4444')];
                 r.det.forEach(d => addLinha(tb, d.nome, d.qtd, d.imp));
             }
-
             const el = document.getElementById('displayPontos'); el.innerText = Math.round(total);
-            const pct = total/meta;
-            el.style.color = pct>=0.9?'var(--success)':(pct>=0.7?'var(--warning)':'var(--danger)');
-            renderChart(labels, data, colors, meta);
+            const pct = total/meta; el.style.color = pct>=0.9?'var(--success)':(pct>=0.7?'var(--warning)':'var(--danger)');
+            renderChart(lbs, dat, col, meta);
         }
 
         function calcMes(lid, m, a) {
             let nota = 100, det = [];
-            const regrasAtivas = regras.filter(r => r.ativa !== false);
-            
+            const ativas = regras.filter(r => r.ativa !== false);
             const lista = ocorrencias.filter(o => {
                 const p = o.data.split('-'); return o.liderId === lid && parseInt(p[1])===m && parseInt(p[0])===a;
             });
-
-            regrasAtivas.forEach(r => {
-                // Filtra ocorrências desta regra E que NÃO estão marcadas como "ignorar"
+            ativas.forEach(r => {
                 const occs = lista.filter(o => o.regraId === r.id && !o.ignorar);
-                
                 if(occs.length > 0) {
-                    let impactoTotal = 0;
-                    
+                    let imp = 0;
                     if (r.meta > 0) {
-                        occs.forEach(o => {
-                            if (o.valor >= r.meta) impactoTotal += r.peso;
-                            else impactoTotal -= r.peso;
-                        });
+                        occs.forEach(o => { if (o.valor >= r.meta) imp += r.peso; else imp -= r.peso; });
                     } else {
-                        let qtd = occs.length;
-                        if(r.limite > 0) qtd = Math.max(0, qtd - r.limite);
-                        
-                        if(r.tipo === 'positivo') impactoTotal = qtd * r.peso;
-                        else impactoTotal = -(qtd * r.peso);
+                        let q = occs.length; if(r.limite > 0) q = Math.max(0, q - r.limite);
+                        if(r.tipo === 'positivo') imp = q * r.peso; else imp = -(q * r.peso);
                     }
-
-                    nota += impactoTotal;
-                    det.push({nome: r.nome, qtd: occs.length, imp: impactoTotal});
+                    nota += imp; det.push({nome: r.nome, qtd: occs.length, imp: imp});
                 }
             });
             return { nota: Math.max(0, nota), det };
         }
 
-        function addLinha(t, n, q, i) {
-            t.innerHTML += `<tr><td>${n}</td><td>${q}</td><td style="color:${i>=0?'var(--success)':'var(--danger)'};font-weight:bold">${i>0?'+':''}${i}</td></tr>`;
-        }
-
+        function addLinha(t, n, q, i) { t.innerHTML += `<tr><td>${n}</td><td>${q}</td><td style="color:${i>=0?'var(--success)':'var(--danger)'};font-weight:bold">${i>0?'+':''}${i}</td></tr>`; }
+        
         function renderChart(l, d, c, max) {
             const ctx = document.getElementById('graficoResultado').getContext('2d');
             if(chartInstance) chartInstance.destroy();
@@ -755,7 +795,6 @@
             });
         }
 
-        // --- RENDER LIDERES (AGORA COM BOTÕES DE AÇÃO) ---
         function renderLideres() { 
             const d=document.getElementById('listaLideresGerenciar'); d.innerHTML=''; 
             lideres.forEach(l => {
