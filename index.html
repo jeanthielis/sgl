@@ -17,9 +17,9 @@
             --bg-body: #f8fafc; --bg-sidebar: linear-gradient(180deg, #0369a1 0%, #0c4a6e 100%);
             --bg-card: #ffffff; --bg-input: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b;
             --text-sidebar: #ffffff; --border-color: #e2e8f0; --primary: #0ea5e9; --primary-hover: #0284c7;
-            --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #3b82f6;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --nav-height: 60px; /* Altura da barra mobile */
+            --nav-height: 60px;
         }
         body.dark-mode {
             --bg-body: #0f172a; --bg-sidebar: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -36,32 +36,61 @@
         .logo-container { padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
         
-        /* Menu Desktop */
         .nav-menu { flex: 1; padding: 20px 0; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; transition: 0.2s; }
         .nav-item:hover { background-color: rgba(255,255,255,0.1); color: white; }
         .nav-item.active { background-color: rgba(255,255,255,0.15); color: white; border-right: 3px solid var(--primary); }
 
-        /* Bottom Navigation (Mobile) - Oculto no Desktop */
         .bottom-nav { display: none; }
 
-        /* Conteúdo Principal */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; height: 100vh; }
         .header { background-color: var(--bg-card); padding: 16px 24px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .header-title { font-size: 20px; font-weight: 600; }
+        
+        /* Botão Tema no Header */
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+        .btn-theme-toggle { background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 5px; transition: color 0.3s; }
+        .btn-theme-toggle:hover { color: var(--primary); }
+
         .content-area { flex: 1; padding: 24px; overflow-y: auto; scroll-behavior: smooth; }
 
-        /* Cards */
+        /* Cards Gerais */
         .card { background-color: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 15px; overflow: hidden; }
         .card-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 16px; }
         .card-body { padding: 20px; }
         
+        /* Estilos do Comparativo */
+        .legend-container { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; background: var(--bg-card); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .legend-item { font-size: 12px; display: flex; align-items: center; gap: 6px; font-weight: 500; }
+        .dot { width: 10px; height: 10px; border-radius: 2px; }
+
+        .list-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        
+        .card-comp { 
+            background: var(--bg-card); border-radius: 12px; padding: 15px 20px; box-shadow: var(--shadow-sm); 
+            border: 1px solid var(--border-color); 
+            display: flex; align-items: center; justify-content: space-between; 
+            transition: transform 0.2s;
+        }
+        .card-comp:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+        .comp-rank-wrapper { display: flex; align-items: center; gap: 15px; flex: 1; }
+        .comp-rank { font-weight: bold; font-size: 14px; color: var(--text-secondary); width: 30px; }
+        .comp-name { font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .comp-score-wrapper { display: flex; flex-direction: column; align-items: center; margin: 0 20px; min-width: 80px; }
+        .comp-score { font-size: 24px; font-weight: 800; line-height: 1; }
+        .comp-score-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; }
+
+        .comp-stats { display: flex; gap: 15px; font-size: 14px; color: var(--text-secondary); min-width: 100px; justify-content: flex-end; }
+        .stat-item { display: flex; align-items: center; gap: 6px; }
+        .stat-item.pos { color: var(--success); }
+        .stat-item.neg { color: var(--danger); }
+
         /* Form Elements */
         .form-control { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--bg-input); color: var(--text-primary); margin-bottom: 15px; font-size: 14px; }
-        /* Evita zoom no iPhone */
         @media screen and (max-width: 768px) { .form-control { font-size: 16px; } }
 
-        /* Buttons */
         .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.2s; }
         .btn:active { transform: scale(0.98); }
         .btn-primary { background-color: var(--primary); color: white; }
@@ -70,28 +99,22 @@
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-sm { padding: 6px 12px; font-size: 12px; }
 
-        /* Tabelas */
         .table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .table th { text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-secondary); }
         .table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
 
-        /* Floating Buttons */
         .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; transition: bottom 0.3s; }
         .fab { width: 56px; height: 56px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: var(--shadow-lg); color: white; transition: transform 0.2s; }
         .fab:active { transform: scale(0.9); }
         .fab-add { background-color: var(--primary); }
-        .fab-theme { background-color: var(--text-primary); color: var(--bg-body); }
 
-        /* Modais */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
         .modal-content { background: var(--bg-card); width: 90%; max-width: 500px; padding: 24px; border-radius: 16px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; }
 
-        /* Score Display & Charts */
         .score-display { text-align: center; padding: 20px; background: linear-gradient(135deg, var(--primary) 0%, #0369a1 100%); border-radius: 16px; color: white; margin-bottom: 20px; }
         .score-value { font-size: 48px; font-weight: 700; line-height: 1; }
         .chart-container { position: relative; height: 250px; width: 100%; margin-top: 20px; margin-bottom: 30px; }
         
-        /* Badges e Helpers */
         .badge-points { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px; white-space: nowrap; }
         .bg-success { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
         .bg-danger { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
@@ -102,7 +125,6 @@
         .tab-content.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Switches & Toggles */
         .toggle-type { display: flex; margin-bottom: 15px; background: var(--border-color); padding: 4px; border-radius: 8px; }
         .toggle-option { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 14px; }
         .toggle-option.active { background: var(--bg-card); box-shadow: var(--shadow-sm); }
@@ -119,18 +141,12 @@
         .checkbox-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: var(--bg-input); padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; }
         .checkbox-container input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); }
 
-        /* Loading */
         #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary); animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* =========================================
-           MOBILE OPTIMIZATIONS (CSS RESPONSIVO)
-           ========================================= */
         @media (max-width: 768px) {
-            .sidebar { display: none; } /* Esconde sidebar lateral */
-            
-            /* Bottom Navigation Bar */
+            .sidebar { display: none; }
             .bottom-nav {
                 display: flex;
                 position: fixed;
@@ -158,15 +174,13 @@
                 height: 100%;
                 gap: 4px;
             }
-            .nav-btn i { font-size: 20px; margin-bottom: 2px; }
+            .nav-btn i { font-size: 18px; margin-bottom: 2px; }
             .nav-btn.active { color: var(--primary); }
             
-            /* Ajustes de Layout Mobile */
             .main-content { height: auto; padding-bottom: calc(var(--nav-height) + 20px); }
             .content-area { padding: 15px; overflow-y: visible; }
             .header { padding: 15px; }
             
-            /* Modais Full Screen no Mobile */
             .modal { align-items: flex-end; }
             .modal-content { 
                 width: 100%; 
@@ -177,16 +191,26 @@
                 animation: slideUp 0.3s;
             }
             @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-            /* FAB Ajustado para não cobrir o menu */
             .fab-container { bottom: calc(var(--nav-height) + 20px); right: 20px; }
-            
-            /* Tabelas Responsivas (Scroll horizontal se precisar) */
             .card-body { overflow-x: auto; }
-            
-            /* Aumentar área de toque */
             .btn { min-height: 44px; }
             select.form-control { min-height: 44px; }
+
+            /* Mobile Stacked Card Layout */
+            .card-comp {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            .comp-rank-wrapper {
+                flex-direction: column;
+                margin-bottom: 10px;
+                gap: 5px;
+            }
+            .comp-rank { width: auto; font-size: 12px; background: var(--bg-input); padding: 2px 8px; border-radius: 10px; }
+            .comp-name { white-space: normal; }
+            .comp-score-wrapper { margin: 10px 0; }
+            .comp-stats { width: 100%; justify-content: center; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 5px; }
         }
     </style>
 </head>
@@ -205,6 +229,7 @@
                 <a class="nav-item active" onclick="switchTab('ocorrencias', this)"><i class="fas fa-list"></i> Ocorrências</a>
                 <a class="nav-item" onclick="switchTab('historico', this)"><i class="fas fa-history"></i> Histórico</a>
                 <a class="nav-item" onclick="switchTab('resultado', this)"><i class="fas fa-trophy"></i> Resultado</a>
+                <a class="nav-item" onclick="switchTab('comparativo', this)"><i class="fas fa-chart-bar"></i> Comparativo</a>
                 <a class="nav-item" onclick="switchTab('configuracoes', this)"><i class="fas fa-cogs"></i> Config</a>
                 <a class="nav-item" onclick="switchTab('lideres', this)"><i class="fas fa-users"></i> Líderes</a>
             </nav>
@@ -213,7 +238,12 @@
         <main class="main-content">
             <header class="header">
                 <h1 class="header-title" id="pageTitle">Ocorrências</h1>
-                <div><span id="currentDate" style="font-size: 14px; color: var(--text-secondary);"></span></div>
+                <div class="header-controls">
+                    <span id="currentDate" style="font-size: 14px; color: var(--text-secondary);"></span>
+                    <button class="btn-theme-toggle" onclick="toggleTheme()" id="themeBtnTop">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
             </header>
 
             <div class="content-area">
@@ -256,7 +286,7 @@
 
                 <div id="resultado" class="tab-content">
                     <div class="card">
-                        <div class="card-header">Desempenho</div>
+                        <div class="card-header">Desempenho Individual</div>
                         <div class="card-body">
                             <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                                 <select id="resLider" class="form-control" style="flex: 100%;"></select>
@@ -278,6 +308,37 @@
                             <div class="chart-container"><canvas id="graficoResultado"></canvas></div>
                             <h3>Detalhamento</h3>
                             <table class="table" id="tabelaExtrato"><thead><tr><th>Regra</th><th>Qtd</th><th>Impacto</th></tr></thead><tbody></tbody></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="comparativo" class="tab-content">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <select id="compAno" class="form-control"></select>
+                        <select id="compMes" class="form-control">
+                            <option value="anual">Anual</option>
+                            <option value="1">Jan</option><option value="2">Fev</option><option value="3">Mar</option>
+                            <option value="4">Abr</option><option value="5">Mai</option><option value="6">Jun</option>
+                            <option value="7">Jul</option><option value="8">Ago</option><option value="9">Set</option>
+                            <option value="10">Out</option><option value="11">Nov</option><option value="12">Dez</option>
+                        </select>
+                    </div>
+
+                    <div class="legend-container">
+                        <div class="legend-item"><div class="dot" style="background:var(--success)"></div> Ótimo (95-100%)</div>
+                        <div class="legend-item"><div class="dot" style="background:var(--info)"></div> Bom (85-94%)</div>
+                        <div class="legend-item"><div class="dot" style="background:var(--warning)"></div> Regular (70-84%)</div>
+                        <div class="legend-item"><div class="dot" style="background:var(--danger)"></div> Ruim (< 70%)</div>
+                    </div>
+
+                    <div id="listaComparativo" class="list-cards"></div>
+
+                    <div class="card">
+                        <div class="card-header">Visão Gráfica</div>
+                        <div class="card-body">
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="graficoComparativo"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -323,17 +384,19 @@
             <button class="nav-btn" onclick="switchTab('resultado', this)">
                 <i class="fas fa-trophy"></i><span>Meta</span>
             </button>
+             <button class="nav-btn" onclick="switchTab('comparativo', this)">
+                <i class="fas fa-chart-bar"></i><span>Comp</span>
+            </button>
             <button class="nav-btn" onclick="switchTab('configuracoes', this)">
                 <i class="fas fa-cogs"></i><span>Cfg</span>
             </button>
-            <button class="nav-btn" onclick="switchTab('lideres', this)">
+             <button class="nav-btn" onclick="switchTab('lideres', this)">
                 <i class="fas fa-users"></i><span>Team</span>
             </button>
         </nav>
 
         <div class="fab-container">
-            <button class="fab fab-theme" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-            <button class="fab fab-add" onclick="abrirModalOcorrencia()"><i class="fas fa-plus"></i></button>
+            <button class="fab fab-add" id="fabAddBtn" onclick="abrirModalOcorrencia()"><i class="fas fa-plus"></i></button>
         </div>
     </div>
 
@@ -416,18 +479,15 @@
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } 
         from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
-        // ==========================================================
-        // COLE SUAS CHAVES DO FIREBASE AQUI
-        // ==========================================================
         const firebaseConfig = {
-  apiKey: "AIzaSyCSq4Aur-1RiDLobPT14TjkAWQ1o98wBfQ",
-  authDomain: "sgl-lideranca.firebaseapp.com",
-  projectId: "sgl-lideranca",
-  storageBucket: "sgl-lideranca.firebasestorage.app",
-  messagingSenderId: "866968216553",
-  appId: "1:866968216553:web:e512e36f620ed58ac72178",
-  measurementId: "G-5278BYMHNY"
-};
+          apiKey: "AIzaSyCSq4Aur-1RiDLobPT14TjkAWQ1o98wBfQ",
+          authDomain: "sgl-lideranca.firebaseapp.com",
+          projectId: "sgl-lideranca",
+          storageBucket: "sgl-lideranca.firebasestorage.app",
+          messagingSenderId: "866968216553",
+          appId: "1:866968216553:web:e512e36f620ed58ac72178",
+          measurementId: "G-5278BYMHNY"
+        };
 
         let app, db;
         try { app = initializeApp(firebaseConfig); db = getFirestore(app); } 
@@ -436,6 +496,7 @@
         let lideres = [], ocorrencias = [], regras = [], regraTipoAtual = 'negativo';
         let isDarkMode = localStorage.getItem('theme') === 'dark';
         let chartInstance = null;
+        let chartComparativoInstance = null; 
 
         async function init() {
             try {
@@ -446,11 +507,13 @@
                 document.getElementById('inputData').valueAsDate = new Date();
                 
                 const y = new Date().getFullYear();
-                [document.getElementById('resAno'), document.getElementById('histAno')].forEach(s => {
+                [document.getElementById('resAno'), document.getElementById('histAno'), document.getElementById('compAno')].forEach(s => {
                     s.innerHTML = ''; [y, y-1].forEach(a => s.appendChild(new Option(a, a)));
                 });
                 
                 renderTudo();
+                // Força verificação inicial do FAB
+                window.switchTab('ocorrencias', document.querySelector('.nav-item.active'));
             } catch (e) { console.error(e); alert("Erro ao carregar dados."); }
         }
 
@@ -478,13 +541,17 @@
 
         window.switchTab = (id, el) => {
             document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
-            // Remove active class from both nav types
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
             
             document.getElementById(id).classList.add('active');
             
-            // Highlight the correct buttons in both menus
+            // Controle de visibilidade do FAB
+            const fabBtn = document.getElementById('fabAddBtn');
+            if(fabBtn) {
+                fabBtn.style.display = (id === 'ocorrencias') ? 'flex' : 'none';
+            }
+
             const desktopBtn = document.querySelector(`.nav-item[onclick*="${id}"]`);
             const mobileBtn = document.querySelector(`.nav-btn[onclick*="${id}"]`);
             if(desktopBtn) desktopBtn.classList.add('active');
@@ -492,12 +559,16 @@
 
             if(id==='resultado') setTimeout(calcularResultado, 50);
             if(id==='historico') renderHistorico();
+            if(id==='comparativo') setTimeout(renderComparativo, 50); 
             
-            // Mobile: Scroll to top
             window.scrollTo(0,0);
         };
 
-        window.toggleTheme = () => { isDarkMode = !isDarkMode; localStorage.setItem('theme', isDarkMode?'dark':'light'); aplicarTema(); };
+        window.toggleTheme = () => { 
+            isDarkMode = !isDarkMode; 
+            localStorage.setItem('theme', isDarkMode?'dark':'light'); 
+            aplicarTema(); 
+        };
         
         window.abrirModalOcorrencia = () => { 
             document.getElementById('modalOcorrencia').style.display = 'flex'; 
@@ -552,6 +623,7 @@
 
         ['resLider','resAno','resPeriodo'].forEach(id=>document.getElementById(id).addEventListener('change', calcularResultado));
         ['histLider','histAno','histMes'].forEach(id=>document.getElementById(id).addEventListener('change', renderHistorico));
+        ['compAno','compMes'].forEach(id=>document.getElementById(id).addEventListener('change', renderComparativo));
 
         // --- CRUD ACTIONS ---
         window.salvarOcorrencia = async () => {
@@ -572,6 +644,7 @@
                 ocorrencias.push({id:docRef.id, ...nova});
                 window.fecharModais(); renderHoje();
                 if(document.getElementById('historico').classList.contains('active')) renderHistorico();
+                if(document.getElementById('comparativo').classList.contains('active')) renderComparativo();
                 alert("Salvo!");
             } catch(e) { console.error(e); alert("Erro ao salvar."); }
         };
@@ -580,7 +653,9 @@
             if(confirm('Excluir?')) {
                 await deleteDoc(doc(db, "ocorrencias", id));
                 ocorrencias = ocorrencias.filter(o => o.id !== id);
-                renderHoje(); if(document.getElementById('historico').classList.contains('active')) renderHistorico();
+                renderHoje(); 
+                if(document.getElementById('historico').classList.contains('active')) renderHistorico();
+                if(document.getElementById('comparativo').classList.contains('active')) renderComparativo();
             }
         };
 
@@ -629,6 +704,7 @@
                     lideres.push({id:docRef.id, nome});
                 }
                 window.fecharModais(); renderLideres(); renderSelects();
+                if(document.getElementById('comparativo').classList.contains('active')) renderComparativo();
             } catch(e) { alert("Erro ao salvar."); }
         };
 
@@ -637,6 +713,7 @@
                 await deleteDoc(doc(db, "lideres", id));
                 lideres = lideres.filter(l => l.id !== id);
                 renderLideres(); renderSelects();
+                if(document.getElementById('comparativo').classList.contains('active')) renderComparativo();
             }
         };
 
@@ -675,7 +752,7 @@
                 const st = r.ativa !== false; 
                 const txt = r.meta > 0 ? 'Meta' : (r.tipo === 'positivo' ? 'Bônus' : 'Pena');
                 t.innerHTML += `
-                <tr style="opacity: ${st ? 1 : 0.5}">
+                <tr style="opacity: ${st ? 1 : 1}">
                     <td><label class="switch"><input type="checkbox" ${st ? 'checked' : ''} onchange="toggleRegraAtiva('${r.id}', ${st})"><span class="slider"></span></label></td>
                     <td>${r.nome}${r.meta>0?`<br><small style="color:var(--primary)">Alvo: ${r.meta}</small>`:''}</td>
                     <td>${txt}</td>
@@ -726,6 +803,127 @@
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="deletarOcorrencia('${o.id}')"><i class="fas fa-trash"></i></button>
                 </div>`;
+            });
+        }
+
+        // --- RENDER COMPARATIVO ---
+        function renderComparativo() {
+            const ano = parseInt(document.getElementById('compAno').value);
+            const mes = document.getElementById('compMes').value;
+            const container = document.getElementById('listaComparativo');
+            container.innerHTML = '';
+
+            let ranking = lideres.map(l => {
+                let pontuacaoFinal = 0;
+                let meta = 0;
+                let qtdBonus = 0;
+                let qtdPena = 0;
+
+                if (mes === 'anual') {
+                    meta = 1200;
+                    for(let i=1; i<=12; i++) {
+                        const r = calcMes(l.id, i, ano);
+                        pontuacaoFinal += r.nota;
+                        r.det.forEach(d => { if(d.imp > 0) qtdBonus += d.qtd; if(d.imp < 0) qtdPena += d.qtd; });
+                    }
+                } else {
+                    meta = 100;
+                    const r = calcMes(l.id, parseInt(mes), ano);
+                    pontuacaoFinal = r.nota;
+                    r.det.forEach(d => { if(d.imp > 0) qtdBonus += d.qtd; if(d.imp < 0) qtdPena += d.qtd; });
+                }
+
+                const pct = pontuacaoFinal / meta;
+                let color = 'var(--danger)'; 
+                if (pct >= 0.95) color = 'var(--success)'; 
+                else if (pct >= 0.85) color = 'var(--info)'; 
+                else if (pct >= 0.70) color = 'var(--warning)'; 
+
+                return { 
+                    nome: l.nome, 
+                    nota: Math.round(pontuacaoFinal), 
+                    color: color, 
+                    bonus: qtdBonus, 
+                    pena: qtdPena,
+                    hexColor: pct >= 0.95 ? '#10b981' : (pct >= 0.85 ? '#3b82f6' : (pct >= 0.7 ? '#f59e0b' : '#ef4444'))
+                };
+            });
+
+            ranking.sort((a, b) => b.nota - a.nota);
+
+            // 1. Renderizar Cartões
+            ranking.forEach((r, index) => {
+                container.innerHTML += `
+                <div class="card-comp" style="border-left: 5px solid ${r.color}">
+                    <div class="comp-rank-wrapper">
+                         <div class="comp-rank" title="Posição">#${index + 1}</div>
+                         <div class="comp-name">${r.nome}</div>
+                    </div>
+                    
+                    <div class="comp-score-wrapper">
+                        <div class="comp-score" style="color: ${r.color}">${r.nota}</div>
+                        <span class="comp-score-label">Pontos</span>
+                    </div>
+
+                    <div class="comp-stats">
+                         <div class="stat-item pos" title="Total Bonificações">
+                            <i class="fas fa-thumbs-up"></i> ${r.bonus}
+                        </div>
+                        <div class="stat-item neg" title="Total Penalidades">
+                            <i class="fas fa-exclamation-triangle"></i> ${r.pena}
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            // 2. Renderizar Gráfico
+            renderChartComparativo(
+                ranking.map(r => r.nome), 
+                ranking.map(r => r.nota), 
+                ranking.map(r => r.hexColor)
+            );
+        }
+
+        function renderChartComparativo(labels, data, colors) {
+            const ctx = document.getElementById('graficoComparativo').getContext('2d');
+            if(chartComparativoInstance) chartComparativoInstance.destroy();
+            
+            const clr = isDarkMode ? '#cbd5e1' : '#475569';
+            
+            chartComparativoInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderRadius: 6,
+                        datalabels: {
+                            color: clr,
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: Math.round,
+                            font: { weight: 'bold' }
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 20 } },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: clr },
+                            grid: { color: isDarkMode ? '#334155' : '#e2e8f0' }
+                        },
+                        x: {
+                            ticks: { color: clr, autoSkip: false, maxRotation: 45, minRotation: 0 },
+                            grid: { display: false }
+                        }
+                    }
+                }
             });
         }
 
@@ -817,9 +1015,17 @@
         }
 
         function aplicarTema() {
-            const b=document.body, i=document.querySelector('.fab-theme i');
-            if(isDarkMode){ b.classList.add('dark-mode'); i.className='fas fa-sun'; }
-            else{ b.classList.remove('dark-mode'); i.className='fas fa-moon'; }
+            const b=document.body;
+            const btn=document.getElementById('themeBtnTop');
+            
+            if(isDarkMode){ 
+                b.classList.add('dark-mode'); 
+                if(btn) btn.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            else{ 
+                b.classList.remove('dark-mode'); 
+                if(btn) btn.innerHTML = '<i class="fas fa-moon"></i>';
+            }
         }
 
         init();
